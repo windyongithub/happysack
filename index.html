@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Under Construction</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap');
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #FEFBD8;
+      --text-primary: #1a1a18;
+      --text-secondary: #6b6b5a;
+      --smiley-color: #d4c94a;
+      --smiley-hover: #b8ad30;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background-color: var(--bg);
+      font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      cursor: none;
+    }
+
+    /* ── Custom cursor ── */
+    #cursor {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: var(--text-primary);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.08s ease, background 0.2s;
+      mix-blend-mode: multiply;
+    }
+
+    /* ── Smiley canvas ── */
+    #smiley-field {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .smiley {
+      position: absolute;
+      font-size: clamp(14px, 2vw, 22px);
+      color: var(--smiley-color);
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      letter-spacing: -1px;
+      pointer-events: none;
+      user-select: none;
+      transition: color 0.3s ease;
+      will-change: transform;
+    }
+
+    /* ── Hero content ── */
+    .hero {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 8vw, 6rem);
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    /* Subtle animated underline */
+    h1 span {
+      display: inline-block;
+      position: relative;
+    }
+
+    h1 span::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 100%;
+      height: 3px;
+      background: var(--smiley-hover);
+      border-radius: 2px;
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: underline-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+    }
+
+    @keyframes underline-in {
+      to { transform: scaleX(1); }
+    }
+
+    p {
+      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+      color: var(--text-secondary);
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      animation: fade-up 0.8s ease 0.7s forwards;
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      opacity: 0;
+      animation: fade-up 0.8s ease 0.1s forwards;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cursor"></div>
+  <div id="smiley-field"></div>
+
+  <main class="hero">
+    <h1><span>under construction</span></h1>
+    <p>check back soon.</p>
+    <p><u>#spreadsacknothate</u></p>
+  </main>
+  <a href="https://www.instagram.com/happysack.store" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram">
+  <img
+    src="instagramyellow.png"
+    alt="Instagram"
+    width="48"
+    height="48"
+    style="display: block; transition: opacity 0.2s ease, transform 0.2s ease;"
+    onmouseover="this.style.opacity='0.8'; this.style.transform='scale(1.08)'"
+    onmouseout="this.style.opacity='1'; this.style.transform='scale(1)'"
+  />
+</a>
+
+  <script>
+    (() => {
+      // ── Config ──────────────────────────────────────────────
+      const COUNT        = 80;    // number of smileys
+      const REPEL_RADIUS = 110;   // px — distance at which smileys flee
+      const REPEL_FORCE  = 1.8;   // how hard they push away
+      const FRICTION     = 0.82;  // velocity damping (0–1)
+      const RETURN_EASE  = 0.055; // spring back to origin
+      const FACES        = [':)', ':D', ';)', ':]', ':3'];
+
+      // ── State ────────────────────────────────────────────────
+      const field   = document.getElementById('smiley-field');
+      const cursor  = document.getElementById('cursor');
+      let mx = -9999, my = -9999;  // mouse position
+
+      // Track mouse
+      window.addEventListener('mousemove', e => {
+        mx = e.clientX;
+        my = e.clientY;
+        cursor.style.left = mx + 'px';
+        cursor.style.top  = my + 'px';
+      });
+
+      // Hide cursor when it leaves window
+      window.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
+
+      // ── Build smileys ────────────────────────────────────────
+      const smileys = [];
+
+      for (let i = 0; i < COUNT; i++) {
+        const el = document.createElement('span');
+        el.className = 'smiley';
+        el.textContent = FACES[Math.floor(Math.random() * FACES.length)];
+        field.appendChild(el);
+
+        const ox = Math.random() * window.innerWidth;
+        const oy = Math.random() * window.innerHeight;
+
+        smileys.push({
+          el,
+          ox, oy,       // origin (resting) position
+          x: ox, y: oy, // current position
+          vx: 0, vy: 0  // velocity
+        });
+
+        el.style.left = ox + 'px';
+        el.style.top  = oy + 'px';
+      }
+
+      // ── Reposition on resize ─────────────────────────────────
+      window.addEventListener('resize', () => {
+        smileys.forEach(s => {
+          s.ox = Math.random() * window.innerWidth;
+          s.oy = Math.random() * window.innerHeight;
+        });
+      });
+
+      // ── Animation loop ───────────────────────────────────────
+      function tick() {
+        smileys.forEach(s => {
+          const dx = s.x - mx;
+          const dy = s.y - my;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+
+          if (dist < REPEL_RADIUS) {
+            // Repel
+            const force = (REPEL_RADIUS - dist) / REPEL_RADIUS * REPEL_FORCE;
+            s.vx += (dx / dist) * force * 4;
+            s.vy += (dy / dist) * force * 4;
+            s.el.style.color = 'var(--smiley-hover)';
+          } else {
+            s.el.style.color = '';
+          }
+
+          // Spring back toward origin
+          s.vx += (s.ox - s.x) * RETURN_EASE;
+          s.vy += (s.oy - s.y) * RETURN_EASE;
+
+          // Friction
+          s.vx *= FRICTION;
+          s.vy *= FRICTION;
+
+          // Integrate
+          s.x += s.vx;
+          s.y += s.vy;
+
+          s.el.style.transform = `translate(${s.x - s.ox}px, ${s.y - s.oy}px)`;
+        });
+
+        requestAnimationFrame(tick);
+      }
+
+      requestAnimationFrame(tick);
+    })();
+  </script>
+
+</body>
+</html>
