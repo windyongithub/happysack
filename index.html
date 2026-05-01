@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="logo.jpg">
+  <link rel="icon" type="image/png" href="logo.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>happysack</title>
@@ -38,7 +38,6 @@
       cursor: none;
     }
 
-    /* ── Custom cursor ── */
     #cursor {
       position: fixed;
       width: 10px;
@@ -52,7 +51,6 @@
       mix-blend-mode: multiply;
     }
 
-    /* ── Smiley canvas ── */
     #smiley-field {
       position: fixed;
       inset: 0;
@@ -74,7 +72,6 @@
       will-change: transform;
     }
 
-    /* ── Hero content ── */
     .hero {
       position: relative;
       z-index: 10;
@@ -89,9 +86,10 @@
       letter-spacing: -0.03em;
       line-height: 1;
       margin-bottom: 1rem;
+      opacity: 0;
+      animation: fade-up 0.8s ease 0.1s forwards;
     }
 
-    /* Subtle animated underline */
     h1 span {
       display: inline-block;
       position: relative;
@@ -129,9 +127,12 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    h1 {
-      opacity: 0;
-      animation: fade-up 0.8s ease 0.1s forwards;
+    a {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 20;
+      cursor: none;
     }
   </style>
 </head>
@@ -145,34 +146,34 @@
     <p>check back soon.</p>
     <p><u>#spreadsacknothate</u></p>
   </main>
+
   <a href="https://www.instagram.com/happysack.store" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram">
-  <img
-    src="instagramyellow.png"
-    alt="Instagram"
-    width="48"
-    height="48"
-    style="display: block; transition: opacity 0.2s ease, transform 0.2s ease;"
-    onmouseover="this.style.opacity='0.8'; this.style.transform='scale(1.08)'"
-    onmouseout="this.style.opacity='1'; this.style.transform='scale(1)'"
-  />
-</a>
+    <img
+      src="instagramyellow.png"
+      alt="Instagram"
+      width="48"
+      height="48"
+      style="display: block; transition: opacity 0.2s ease, transform 0.2s ease;"
+      onmouseover="this.style.opacity='0.8'; this.style.transform='scale(1.08)'"
+      onmouseout="this.style.opacity='1'; this.style.transform='scale(1)'"
+    />
+  </a>
 
   <script>
     (() => {
-      // ── Config ──────────────────────────────────────────────
-      const COUNT        = 80;    // number of smileys
-      const REPEL_RADIUS = 110;   // px — distance at which smileys flee
-      const REPEL_FORCE  = 1.8;   // how hard they push away
-      const FRICTION     = 0.82;  // velocity damping (0–1)
-      const RETURN_EASE  = 0.055; // spring back to origin
-      const FACES        = [':)', ':D', ';)', ':]', ':3'];
+      const COUNT        = 80;
+      const REPEL_RADIUS = 110;
+      const REPEL_FORCE  = 1.8;
+      const FRICTION     = 0.82;
+      const RETURN_EASE  = 0.055;
 
-      // ── State ────────────────────────────────────────────────
-      const field   = document.getElementById('smiley-field');
-      const cursor  = document.getElementById('cursor');
-      let mx = -9999, my = -9999;  // mouse position
+      // Faces flipped to face right, :3 removed
+      const FACES = ['(-:', 'D-:', '(-;', '[-:'];
 
-      // Track mouse
+      const field  = document.getElementById('smiley-field');
+      const cursor = document.getElementById('cursor');
+      let mx = -9999, my = -9999;
+
       window.addEventListener('mousemove', e => {
         mx = e.clientX;
         my = e.clientY;
@@ -180,10 +181,8 @@
         cursor.style.top  = my + 'px';
       });
 
-      // Hide cursor when it leaves window
       window.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
 
-      // ── Build smileys ────────────────────────────────────────
       const smileys = [];
 
       for (let i = 0; i < COUNT; i++) {
@@ -195,18 +194,25 @@
         const ox = Math.random() * window.innerWidth;
         const oy = Math.random() * window.innerHeight;
 
+        // Each smiley gets a unique drift wave so they all move independently
         smileys.push({
           el,
-          ox, oy,       // origin (resting) position
-          x: ox, y: oy, // current position
-          vx: 0, vy: 0  // velocity
+          ox, oy,
+          x: ox, y: oy,
+          vx: 0, vy: 0,
+          // Float params: random amplitude, speed, and phase per axis
+          floatAx: 18 + Math.random() * 28,
+          floatAy: 14 + Math.random() * 22,
+          floatSpeedX: 0.0004 + Math.random() * 0.0006,
+          floatSpeedY: 0.0003 + Math.random() * 0.0005,
+          floatPhaseX: Math.random() * Math.PI * 2,
+          floatPhaseY: Math.random() * Math.PI * 2,
         });
 
         el.style.left = ox + 'px';
         el.style.top  = oy + 'px';
       }
 
-      // ── Reposition on resize ─────────────────────────────────
       window.addEventListener('resize', () => {
         smileys.forEach(s => {
           s.ox = Math.random() * window.innerWidth;
@@ -214,15 +220,25 @@
         });
       });
 
-      // ── Animation loop ───────────────────────────────────────
-      function tick() {
+      let lastTime = null;
+
+      function tick(now) {
+        if (!lastTime) lastTime = now;
+        const elapsed = now - lastTime;
+        lastTime = now;
+
         smileys.forEach(s => {
+          // Floating origin drifts over time with sine waves
+          const floatX = Math.sin(now * s.floatSpeedX + s.floatPhaseX) * s.floatAx;
+          const floatY = Math.cos(now * s.floatSpeedY + s.floatPhaseY) * s.floatAy;
+          const targetX = s.ox + floatX;
+          const targetY = s.oy + floatY;
+
           const dx = s.x - mx;
           const dy = s.y - my;
           const dist = Math.sqrt(dx * dx + dy * dy) || 1;
 
           if (dist < REPEL_RADIUS) {
-            // Repel
             const force = (REPEL_RADIUS - dist) / REPEL_RADIUS * REPEL_FORCE;
             s.vx += (dx / dist) * force * 4;
             s.vy += (dy / dist) * force * 4;
@@ -231,19 +247,19 @@
             s.el.style.color = '';
           }
 
-          // Spring back toward origin
-          s.vx += (s.ox - s.x) * RETURN_EASE;
-          s.vy += (s.oy - s.y) * RETURN_EASE;
+          // Spring toward the floating target (not the fixed origin)
+          s.vx += (targetX - s.x) * RETURN_EASE;
+          s.vy += (targetY - s.y) * RETURN_EASE;
 
-          // Friction
           s.vx *= FRICTION;
           s.vy *= FRICTION;
 
-          // Integrate
           s.x += s.vx;
           s.y += s.vy;
 
-          s.el.style.transform = `translate(${s.x - s.ox}px, ${s.y - s.oy}px)`;
+          s.el.style.left = s.x + 'px';
+          s.el.style.top  = s.y + 'px';
+          s.el.style.transform = '';
         });
 
         requestAnimationFrame(tick);
