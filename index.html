@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" type="image/png" href="logo.jpg">
+    <script async type='text/javascript' src='https://static.klaviyo.com/onsite/js/X7VnH6/klaviyo.js?company_id=X7VnH6'></script>
+          <script type="text/javascript"> 
+          //Initialize Klaviyo object on page load
+          !function(){if(!window.klaviyo){window._klOnsite=window._klOnsite||[];try{window.klaviyo=new Proxy({},{get:function(n,i){return"push"===i?function(){var n;(n=window._klOnsite).push.apply(n,arguments)}:function(){for(var n=arguments.length,o=new Array(n),w=0;w<n;w++)o[w]=arguments[w];var t="function"==typeof o[o.length-1]?o.pop():void 0,e=new Promise((function(n){window._klOnsite.push([i].concat(o,[function(i){t&&t(i),n(i)}]))}));return e}}})}catch(n){window.klaviyo=window.klaviyo||[],window.klaviyo.push=function(){var n;(n=window._klOnsite).push.apply(n,arguments)}}}}(); </script>
+  <link rel="icon" type="image/png" href="logo.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>happysack</title>
@@ -20,6 +24,12 @@
       --text-secondary: #6b6b5a;
       --smiley-color: #d4c94a;
       --smiley-hover: #b8ad30;
+      --page-pad: clamp(16px, 3vw, 40px);
+    }
+
+    html {
+      width: 100%;
+      height: 100%;
     }
 
     html, body {
@@ -31,13 +41,13 @@
     body {
       background-color: var(--bg);
       font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: block;
       min-height: 100vh;
       cursor: none;
+      isolation: isolate;
     }
 
+    /* ── Custom cursor ── */
     #cursor {
       position: fixed;
       width: 10px;
@@ -49,8 +59,10 @@
       transform: translate(-50%, -50%);
       transition: transform 0.08s ease, background 0.2s;
       mix-blend-mode: multiply;
+      opacity: 0;
     }
 
+    /* ── Smiley canvas ── */
     #smiley-field {
       position: fixed;
       inset: 0;
@@ -72,11 +84,22 @@
       will-change: transform;
     }
 
+    /* ── Hero content ── */
+    .ui-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
     .hero {
       position: relative;
-      z-index: 10;
       text-align: center;
       padding: 2rem;
+      pointer-events: auto;
     }
 
     h1 {
@@ -86,10 +109,10 @@
       letter-spacing: -0.03em;
       line-height: 1;
       margin-bottom: 1rem;
-      opacity: 0;
-      animation: fade-up 0.8s ease 0.1s forwards;
+      white-space: nowrap;
     }
 
+    /* Subtle animated underline */
     h1 span {
       display: inline-block;
       position: relative;
@@ -122,17 +145,158 @@
       animation: fade-up 0.8s ease 0.7s forwards;
     }
 
+    .signup-form {
+      margin: 1.5rem auto 0;
+      width: min(92vw, 26rem);
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 0.65rem;
+      opacity: 0;
+      animation: fade-up 0.8s ease 0.9s forwards;
+    }
+
+    .signup-input {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid rgba(26, 26, 24, 0.14);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.38);
+      color: var(--text-primary);
+      font: inherit;
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0.95rem 1.15rem;
+      outline: none;
+      box-shadow: 0 10px 30px rgba(26, 26, 24, 0.06);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .signup-input::placeholder {
+      color: rgba(107, 107, 90, 0.88);
+    }
+
+    .signup-input:focus {
+      border-color: rgba(26, 26, 24, 0.34);
+      box-shadow: 0 14px 34px rgba(26, 26, 24, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .signup-button {
+      width: 3rem;
+      height: 3rem;
+      border: 0;
+      border-radius: 999px;
+      background: var(--smiley-hover);
+      color: #1a1a18;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(184, 173, 48, 0.25);
+      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .signup-button:hover {
+      transform: translateY(-1px) scale(1.04);
+      box-shadow: 0 14px 28px rgba(184, 173, 48, 0.34);
+    }
+
+    .signup-button:focus-visible {
+      outline: 2px solid rgba(26, 26, 24, 0.55);
+      outline-offset: 3px;
+    }
+
+    .signup-button svg {
+      width: 1.1rem;
+      height: 1.1rem;
+      display: block;
+      color: #1a1a18;
+    }
+
+    .signup-button path {
+      stroke: currentColor;
+    }
+
+    .signup-status {
+      grid-column: 1 / -1;
+      min-height: 1.1rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .signup-status.is-visible {
+      opacity: 1;
+    }
+
     @keyframes fade-up {
       from { opacity: 0; transform: translateY(8px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    a {
+    h1 {
+      opacity: 0;
+      animation: fade-up 0.8s ease 0.1s forwards;
+    }
+
+    .social-link {
       position: fixed;
-      bottom: 24px;
       right: 24px;
-      z-index: 20;
-      cursor: none;
+      bottom: 24px;
+      z-index: 40;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .social-link:hover {
+      transform: scale(1.06);
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    .social-link img {
+      display: block;
+      width: 48px;
+      height: 48px;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .signup-form,
+      .signup-input,
+      .signup-button {
+        cursor: none;
+      }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      body {
+        cursor: auto;
+      }
+
+      #cursor {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -153,9 +317,6 @@
       alt="Instagram"
       width="48"
       height="48"
-      style="display: block; transition: opacity 0.2s ease, transform 0.2s ease;"
-      onmouseover="this.style.opacity='0.8'; this.style.transform='scale(1.08)'"
-      onmouseout="this.style.opacity='1'; this.style.transform='scale(1)'"
     />
   </a>
 
@@ -171,16 +332,89 @@
 
       const field  = document.getElementById('smiley-field');
       const cursor = document.getElementById('cursor');
+      const signupForm = document.getElementById('signup-form');
+      const signupInput = document.getElementById('email-input');
+      const signupStatus = document.getElementById('signup-status');
+      const KLAVIYO_SITE_ID = 'X7VnH6';
+      const KLAVIYO_LIST_ID = 'VNsxda';
       let mx = -9999, my = -9999;
+
+      const setStatus = (message, visible = true) => {
+        signupStatus.textContent = message;
+        signupStatus.classList.toggle('is-visible', visible);
+      };
+
+      const submitEmail = async (email) => {
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => controller.abort(), 10000);
+
+        try {
+          const response = await fetch(`https://a.klaviyo.com/client/subscriptions/?company_id=${encodeURIComponent(KLAVIYO_SITE_ID)}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              revision: '2023-02-22',
+            },
+            body: JSON.stringify({
+              data: {
+                type: 'subscription',
+                attributes: {
+                  list_id: KLAVIYO_LIST_ID,
+                  custom_source: 'happysack homepage signup form',
+                  email,
+                },
+              },
+            }),
+            signal: controller.signal,
+          });
+
+          if (!response.ok) {
+            const details = await response.text();
+            throw new Error(`Klaviyo subscription failed (${response.status}): ${details}`);
+          }
+        } finally {
+          window.clearTimeout(timeoutId);
+        }
+      };
+
+      signupForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const email = signupInput.value.trim();
+        if (!email) {
+          setStatus('Please enter an email address.');
+          signupInput.focus();
+          return;
+        }
+
+        signupForm.dataset.submitting = 'true';
+        signupStatus.textContent = 'Sending...';
+        signupStatus.classList.add('is-visible');
+
+        try {
+          await submitEmail(email);
+          signupForm.reset();
+          setStatus('Thanks, you are on the list.');
+        } catch (error) {
+          setStatus('Sorry, something went wrong. Please try again.');
+        } finally {
+          delete signupForm.dataset.submitting;
+        }
+      });
 
       window.addEventListener('mousemove', e => {
         mx = e.clientX;
         my = e.clientY;
+        cursor.style.opacity = '1';
         cursor.style.left = mx + 'px';
         cursor.style.top  = my + 'px';
       });
 
-      window.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
+      window.addEventListener('mouseleave', () => {
+        mx = -9999;
+        my = -9999;
+        cursor.style.opacity = '0';
+      });
 
       const smileys = [];
 
