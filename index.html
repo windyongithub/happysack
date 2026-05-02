@@ -23,7 +23,8 @@
       --text-secondary: #6b6b5a;
       --smiley-color: #d4c94a;
       --smiley-hover: #b8ad30;
-      --page-pad: clamp(16px, 3vw, 40px);
+      --signup-gap: 0.65rem;
+      --signup-button-size: 3rem;
     }
 
     html, body {
@@ -229,16 +230,15 @@
       opacity: 1;
     }
 
-    /* ── Hand-drawn annotation ── */
-    .annotation {
+    /* ── Desktop annotation: left of form ── */
+    .annotation-desktop {
       position: absolute;
-      left: calc(100% + 8px);
-      top: 50%;
-      transform: translateY(-72%);
+      right: calc(100% + 10px);
+      top: calc(1.5rem + 50%);
+      transform: translateY(-80%);
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      gap: 0;
+      align-items: flex-end;
       pointer-events: none;
       opacity: 0;
       white-space: nowrap;
@@ -246,27 +246,51 @@
     }
 
     @keyframes fade-in-annotation {
-      from { opacity: 0; transform: translateY(calc(-72% + 6px)); }
-      to   { opacity: 1; transform: translateY(-72%); }
+      from { opacity: 0; transform: translateY(calc(-80% + 6px)); }
+      to   { opacity: 1; transform: translateY(-80%); }
     }
 
-    .annotation-text {
+    .annotation-desktop .annotation-text {
       font-family: 'Caveat', cursive;
-      font-size: clamp(0.95rem, 2vw, 1.2rem);
+      font-size: clamp(1.1rem, 2.4vw, 1.5rem);
       font-weight: 600;
       color: var(--smiley-hover);
       line-height: 1.2;
-      transform: rotate(-3deg);
+      transform: rotate(-4deg);
       display: block;
-      margin-left: 4px;
+      text-align: right;
+      margin-right: 6px;
     }
 
-    .annotation-arrow svg {
-      display: block;
-      overflow: visible;
+    /* ── Mobile annotation: fixed at bottom, points up ── */
+    .annotation-mobile {
+      display: none;
+      position: absolute;
+      top: calc(1.7rem + var(--signup-button-size));
+      left: calc(50% - ((var(--signup-button-size) + var(--signup-gap)) / 2));
+      transform: translateX(-50%);
+      width: max-content;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.12rem;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      animation: fade-up 0.7s ease 1.3s forwards;
     }
 
-    /* draw-on animation for the arrow paths */
+    .annotation-mobile .annotation-text {
+      font-family: 'Caveat', cursive;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--smiley-hover);
+      line-height: 1.2;
+      text-align: center;
+      transform: rotate(-2deg);
+      display: block;
+      margin-top: -2px;
+    }
+
     @keyframes draw {
       to { stroke-dashoffset: 0; }
     }
@@ -280,6 +304,14 @@
     @keyframes fade-up-plain {
       from { opacity: 0; transform: translateY(8px); }
       to   { opacity: 1; transform: translateY(0); }
+    }
+
+    h1, p {
+      animation-name: fade-up-plain;
+    }
+
+    .signup-form {
+      animation-name: fade-up-plain;
     }
 
     .social-link {
@@ -327,7 +359,8 @@
     @media (hover: none), (pointer: coarse) {
       body { cursor: auto; }
       #cursor { display: none; }
-      .annotation { display: none; }
+      .annotation-desktop { display: none; }
+      .annotation-mobile { display: flex; }
     }
   </style>
 </head>
@@ -342,6 +375,30 @@
       <p><u>#spreadsacknothate</u></p>
 
       <div class="form-wrap">
+        <!-- Desktop: left-side annotation -->
+        <div class="annotation-desktop" aria-hidden="true">
+          <span class="annotation-text">launch day<br>discount!</span>
+          <svg width="90" height="58" viewBox="0 0 90 58" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right:-2px;margin-top:-2px;">
+            <path
+              d="M8 6 C14 16, 20 28, 34 38 C48 48, 64 48, 82 44"
+              stroke="#b8ad30"
+              stroke-width="2.8"
+              stroke-linecap="round"
+              fill="none"
+              style="stroke-dasharray:130;stroke-dashoffset:130;animation:draw 0.65s ease 1.7s forwards;"
+            />
+            <path
+              d="M82 44 L70 38 M82 44 L72 52"
+              stroke="#b8ad30"
+              stroke-width="2.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              fill="none"
+              style="stroke-dasharray:30;stroke-dashoffset:30;animation:draw 0.25s ease 2.3s forwards;"
+            />
+          </svg>
+        </div>
+
         <form class="signup-form" id="signup-form">
           <label class="sr-only" for="email-input">Email address</label>
           <input
@@ -363,37 +420,29 @@
           <div class="signup-status" id="signup-status" aria-live="polite"></div>
         </form>
 
-        <!-- Hand-drawn annotation: text + wobbly arrow pointing left toward button -->
-        <div class="annotation" aria-hidden="true">
-          <span class="annotation-text">launch day<br>discount!</span>
-          <div class="annotation-arrow">
-            <!-- Curved arrow sweeping left-down toward the submit button -->
-            <svg width="62" height="52" viewBox="0 0 62 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- arrow shaft: starts top-right, curves to bottom-left -->
-              <path
-                id="shaft"
-                d="M54 6 C50 10, 42 14, 34 22 C26 30, 16 38, 8 46"
-                stroke="#b8ad30"
-                stroke-width="2.3"
-                stroke-linecap="round"
-                fill="none"
-                style="stroke-dasharray:95;stroke-dashoffset:95;animation:draw 0.55s ease 1.7s forwards;"
-              />
-              <!-- arrowhead -->
-              <path
-                d="M8 46 L4 38 M8 46 L16 42"
-                stroke="#b8ad30"
-                stroke-width="2.3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                fill="none"
-                style="stroke-dasharray:30;stroke-dashoffset:30;animation:draw 0.25s ease 2.2s forwards;"
-              />
-            </svg>
-          </div>
+        <div class="annotation-mobile" aria-hidden="true">
+          <svg width="52" height="66" viewBox="0 0 52 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M23 60 C22 46, 23 28, 26 6"
+              stroke="#b8ad30"
+              stroke-width="2.8"
+              stroke-linecap="round"
+              fill="none"
+              style="stroke-dasharray:110;stroke-dashoffset:110;animation:draw 0.65s ease 1.7s forwards;"
+            />
+            <path
+              d="M26 6 L19 17 M26 6 L34 16"
+              stroke="#b8ad30"
+              stroke-width="2.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              fill="none"
+              style="stroke-dasharray:30;stroke-dashoffset:30;animation:draw 0.25s ease 2.3s forwards;"
+            />
+          </svg>
+          <span class="annotation-text">launch day discount!</span>
         </div>
       </div>
-
     </main>
   </div>
 
