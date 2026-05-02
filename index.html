@@ -23,6 +23,8 @@
       --text-secondary: #6b6b5a;
       --smiley-color: #d4c94a;
       --smiley-hover: #b8ad30;
+      --signup-gap: 0.65rem;
+      --signup-button-size: 3rem;
     }
 
     html, body {
@@ -148,7 +150,7 @@
       display: grid;
       grid-template-columns: 1fr auto;
       align-items: center;
-      gap: 0.65rem;
+      gap: var(--signup-gap);
       opacity: 0;
       animation: fade-up 0.8s ease 0.9s forwards;
     }
@@ -180,8 +182,8 @@
     }
 
     .signup-button {
-      width: 3rem;
-      height: 3rem;
+      width: var(--signup-button-size);
+      height: var(--signup-button-size);
       border: 0;
       border-radius: 999px;
       background: var(--smiley-hover);
@@ -263,16 +265,16 @@
     /* ── Mobile annotation: fixed at bottom, points up ── */
     .annotation-mobile {
       display: none;
-      position: fixed;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 30;
+      position: relative;
+      left: calc((var(--signup-button-size) + var(--signup-gap)) / -2);
+      width: 100%;
+      margin-top: 0.35rem;
       flex-direction: column;
       align-items: center;
+      gap: 0.15rem;
       pointer-events: none;
       opacity: 0;
-      animation: fade-up 0.7s ease 1.3s forwards;
+      animation: fade-up-plain 0.7s ease 1.3s forwards;
     }
 
     .annotation-mobile .annotation-text {
@@ -284,7 +286,7 @@
       text-align: center;
       transform: rotate(-2deg);
       display: block;
-      margin-bottom: 2px;
+      margin-top: -2px;
     }
 
     @keyframes draw {
@@ -415,34 +417,31 @@
           </button>
           <div class="signup-status" id="signup-status" aria-live="polite"></div>
         </form>
+
+        <div class="annotation-mobile" aria-hidden="true">
+          <svg width="52" height="66" viewBox="0 0 52 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M26 60 C24 48, 20 36, 22 23 C24 12, 28 8, 28 6"
+              stroke="#b8ad30"
+              stroke-width="2.8"
+              stroke-linecap="round"
+              fill="none"
+              style="stroke-dasharray:110;stroke-dashoffset:110;animation:draw 0.65s ease 1.7s forwards;"
+            />
+            <path
+              d="M28 6 L20 18 M28 6 L36 18"
+              stroke="#b8ad30"
+              stroke-width="2.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              fill="none"
+              style="stroke-dasharray:30;stroke-dashoffset:30;animation:draw 0.25s ease 2.3s forwards;"
+            />
+          </svg>
+          <span class="annotation-text">launch day discount!</span>
+        </div>
       </div>
     </main>
-  </div>
-
-  <!-- Mobile: bottom annotation pointing up -->
-  <div class="annotation-mobile" aria-hidden="true">
-    <span class="annotation-text">launch day discount!</span>
-    <!-- Arrow points upward, slight curve for hand-drawn feel -->
-    <svg width="52" height="80" viewBox="0 0 52 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M26 74 C24 60, 20 44, 22 28 C24 14, 28 8, 28 6"
-        stroke="#b8ad30"
-        stroke-width="2.8"
-        stroke-linecap="round"
-        fill="none"
-        style="stroke-dasharray:120;stroke-dashoffset:120;animation:draw 0.65s ease 1.7s forwards;"
-      />
-      <!-- arrowhead pointing up -->
-      <path
-        d="M28 6 L20 18 M28 6 L36 18"
-        stroke="#b8ad30"
-        stroke-width="2.8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        fill="none"
-        style="stroke-dasharray:30;stroke-dashoffset:30;animation:draw 0.25s ease 2.3s forwards;"
-      />
-    </svg>
   </div>
 
   <a
