@@ -358,13 +358,13 @@
         signupStatus.classList.toggle('is-visible', visible);
       };
 
-      const submitEmail = async (email) => {
+      const submitEmail = (email) => {
         if (!window.klaviyo) {
           throw new Error('Klaviyo is not ready yet.');
         }
 
-        await window.klaviyo.identify({ '$email': email });
-        await window.klaviyo.track('Homepage Email Signup', {
+        window.klaviyo.identify({ '$email': email });
+        window.klaviyo.track('Homepage Email Signup', {
           '$email': email,
           source: 'homepage'
         });
@@ -385,7 +385,7 @@
         signupStatus.classList.add('is-visible');
 
         try {
-          await submitEmail(email);
+          submitEmail(email);
           signupForm.reset();
           setStatus('Thanks, you are on the list.');
         } catch (error) {
