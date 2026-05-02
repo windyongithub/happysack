@@ -265,16 +265,18 @@
     /* ── Mobile annotation: fixed at bottom, points up ── */
     .annotation-mobile {
       display: none;
-      position: relative;
-      left: calc((var(--signup-button-size) + var(--signup-gap)) / -2);
-      width: 100%;
-      margin-top: 0.35rem;
+      position: absolute;
+      top: calc(1.5rem + var(--signup-button-size) - 0.35rem);
+      left: calc(50% - ((var(--signup-button-size) + var(--signup-gap)) / 2));
+      transform: translateX(-50%);
+      width: max-content;
       flex-direction: column;
       align-items: center;
-      gap: 0.15rem;
+      gap: 0.12rem;
       pointer-events: none;
+      z-index: 1;
       opacity: 0;
-      animation: fade-up-plain 0.7s ease 1.3s forwards;
+      animation: fade-up 0.7s ease 1.3s forwards;
     }
 
     .annotation-mobile .annotation-text {
