@@ -228,11 +228,10 @@
       opacity: 1;
     }
 
-    /* ── Annotation: left of form ── */
-    .annotation {
+    /* ── Desktop annotation: left of form ── */
+    .annotation-desktop {
       position: absolute;
       right: calc(100% + 10px);
-      /* vertical centre aligned with the form row, nudged up slightly */
       top: calc(1.5rem + 50%);
       transform: translateY(-80%);
       display: flex;
@@ -249,7 +248,7 @@
       to   { opacity: 1; transform: translateY(-80%); }
     }
 
-    .annotation-text {
+    .annotation-desktop .annotation-text {
       font-family: 'Caveat', cursive;
       font-size: clamp(1.1rem, 2.4vw, 1.5rem);
       font-weight: 600;
@@ -261,13 +260,54 @@
       margin-right: 6px;
     }
 
+    /* ── Mobile annotation: fixed at bottom, points up ── */
+    .annotation-mobile {
+      display: none;
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      flex-direction: column;
+      align-items: center;
+      pointer-events: none;
+      opacity: 0;
+      animation: fade-up 0.7s ease 1.3s forwards;
+    }
+
+    .annotation-mobile .annotation-text {
+      font-family: 'Caveat', cursive;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--smiley-hover);
+      line-height: 1.2;
+      text-align: center;
+      transform: rotate(-2deg);
+      display: block;
+      margin-bottom: 2px;
+    }
+
     @keyframes draw {
       to { stroke-dashoffset: 0; }
     }
 
     @keyframes fade-up {
+      from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* desktop fade-up without translateX override */
+    @keyframes fade-up-plain {
       from { opacity: 0; transform: translateY(8px); }
       to   { opacity: 1; transform: translateY(0); }
+    }
+
+    h1, p {
+      animation-name: fade-up-plain;
+    }
+
+    .signup-form {
+      animation-name: fade-up-plain;
     }
 
     .social-link {
@@ -315,7 +355,8 @@
     @media (hover: none), (pointer: coarse) {
       body { cursor: auto; }
       #cursor { display: none; }
-      .annotation { display: none; }
+      .annotation-desktop { display: none; }
+      .annotation-mobile { display: flex; }
     }
   </style>
 </head>
@@ -330,13 +371,9 @@
       <p><u>#spreadsacknothate</u></p>
 
       <div class="form-wrap">
-
-        <div class="annotation" aria-hidden="true">
+        <!-- Desktop: left-side annotation -->
+        <div class="annotation-desktop" aria-hidden="true">
           <span class="annotation-text">launch day<br>discount!</span>
-          <!--
-            Arrow tip ends at ~(82, 44) which maps to the form vertically.
-            Shaft curves from top-left down to right, ending mid-height of the form row.
-          -->
           <svg width="90" height="58" viewBox="0 0 90 58" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right:-2px;margin-top:-2px;">
             <path
               d="M8 6 C14 16, 20 28, 34 38 C48 48, 64 48, 82 44"
@@ -378,9 +415,34 @@
           </button>
           <div class="signup-status" id="signup-status" aria-live="polite"></div>
         </form>
-
       </div>
     </main>
+  </div>
+
+  <!-- Mobile: bottom annotation pointing up -->
+  <div class="annotation-mobile" aria-hidden="true">
+    <span class="annotation-text">launch day discount!</span>
+    <!-- Arrow points upward, slight curve for hand-drawn feel -->
+    <svg width="52" height="80" viewBox="0 0 52 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M26 74 C24 60, 20 44, 22 28 C24 14, 28 8, 28 6"
+        stroke="#b8ad30"
+        stroke-width="2.8"
+        stroke-linecap="round"
+        fill="none"
+        style="stroke-dasharray:120;stroke-dashoffset:120;animation:draw 0.65s ease 1.7s forwards;"
+      />
+      <!-- arrowhead pointing up -->
+      <path
+        d="M28 6 L20 18 M28 6 L36 18"
+        stroke="#b8ad30"
+        stroke-width="2.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"
+        style="stroke-dasharray:30;stroke-dashoffset:30;animation:draw 0.25s ease 2.3s forwards;"
+      />
+    </svg>
   </div>
 
   <a
