@@ -60,6 +60,7 @@
       transform: translate(-50%, -50%);
       transition: transform 0.08s ease, background 0.2s;
       mix-blend-mode: multiply;
+      opacity: 0;
     }
 
     /* ── Smiley canvas ── */
@@ -264,6 +265,16 @@
       white-space: nowrap;
       border: 0;
     }
+
+    @media (hover: none), (pointer: coarse) {
+      body {
+        cursor: auto;
+      }
+
+      #cursor {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -374,11 +385,16 @@
       window.addEventListener('mousemove', e => {
         mx = e.clientX;
         my = e.clientY;
+        cursor.style.opacity = '1';
         cursor.style.left = mx + 'px';
         cursor.style.top  = my + 'px';
       });
 
-      window.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
+      window.addEventListener('mouseleave', () => {
+        mx = -9999;
+        my = -9999;
+        cursor.style.opacity = '0';
+      });
 
       const smileys = [];
 
