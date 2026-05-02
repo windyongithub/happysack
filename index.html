@@ -41,11 +41,10 @@
     body {
       background-color: var(--bg);
       font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: block;
       min-height: 100vh;
       cursor: none;
+      isolation: isolate;
     }
 
     /* ── Custom cursor ── */
@@ -86,11 +85,21 @@
     }
 
     /* ── Hero content ── */
+    .ui-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
     .hero {
       position: relative;
-      z-index: 30;
       text-align: center;
       padding: 2rem;
+      pointer-events: auto;
     }
 
     h1 {
@@ -140,7 +149,6 @@
       margin: 1.5rem auto 0;
       width: min(92vw, 26rem);
       position: relative;
-      z-index: 31;
       display: grid;
       grid-template-columns: 1fr auto;
       align-items: center;
@@ -297,31 +305,33 @@
   <div id="cursor"></div>
   <div id="smiley-field"></div>
 
-  <main class="hero">
-    <h1><span>under construction</span></h1>
-    <p>check back soon.</p>
-    <p><u>#spreadsacknothate</u></p>
-    <form class="signup-form" id="signup-form">
-      <label class="sr-only" for="email-input">Email address</label>
-      <input
-        class="signup-input"
-        id="email-input"
-        name="email"
-        type="email"
-        autocomplete="email"
-        inputmode="email"
-        placeholder="join the mailing list"
-        required
-      />
-      <button class="signup-button" type="submit" aria-label="Submit email">
-        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
-          <path d="M5 12h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
-          <path d="M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </button>
-      <div class="signup-status" id="signup-status" aria-live="polite"></div>
-    </form>
-  </main>
+  <div class="ui-layer">
+    <main class="hero">
+      <h1><span>under construction</span></h1>
+      <p>check back soon.</p>
+      <p><u>#spreadsacknothate</u></p>
+      <form class="signup-form" id="signup-form">
+        <label class="sr-only" for="email-input">Email address</label>
+        <input
+          class="signup-input"
+          id="email-input"
+          name="email"
+          type="email"
+          autocomplete="email"
+          inputmode="email"
+          placeholder="join the mailing list"
+          required
+        />
+        <button class="signup-button" type="submit" aria-label="Submit email">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
+            <path d="M5 12h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+            <path d="M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <div class="signup-status" id="signup-status" aria-live="polite"></div>
+      </form>
+    </main>
+  </div>
   <a
     class="social-link"
     href="https://www.instagram.com/happysack.store"
