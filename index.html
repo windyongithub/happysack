@@ -228,17 +228,16 @@
       opacity: 1;
     }
 
-    /* ── Hand-drawn annotation — LEFT side ── */
+    /* ── Annotation: left of form ── */
     .annotation {
       position: absolute;
-      /* right edge of annotation aligns just left of the form */
       right: calc(100% + 10px);
-      top: 50%;
-      transform: translateY(-60%);
+      /* vertical centre aligned with the form row, nudged up slightly */
+      top: calc(1.5rem + 50%);
+      transform: translateY(-80%);
       display: flex;
       flex-direction: column;
-      align-items: flex-end;  /* text + arrow flush right, pointing toward form */
-      gap: 0;
+      align-items: flex-end;
       pointer-events: none;
       opacity: 0;
       white-space: nowrap;
@@ -246,8 +245,8 @@
     }
 
     @keyframes fade-in-annotation {
-      from { opacity: 0; transform: translateY(calc(-60% + 6px)); }
-      to   { opacity: 1; transform: translateY(-60%); }
+      from { opacity: 0; transform: translateY(calc(-80% + 6px)); }
+      to   { opacity: 1; transform: translateY(-80%); }
     }
 
     .annotation-text {
@@ -262,7 +261,6 @@
       margin-right: 6px;
     }
 
-    /* draw-on animation */
     @keyframes draw {
       to { stroke-dashoffset: 0; }
     }
@@ -333,23 +331,23 @@
 
       <div class="form-wrap">
 
-        <!-- Hand-drawn annotation: LEFT of form, arrow curves right toward input -->
         <div class="annotation" aria-hidden="true">
           <span class="annotation-text">launch day<br>discount!</span>
-          <!-- Arrow starts top-left, curves down-right, tip points at form -->
-          <svg width="90" height="70" viewBox="0 0 90 70" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right:-4px;margin-top:-4px;">
-            <!-- shaft: originates bottom-left of text, sweeps to the right toward form -->
+          <!--
+            Arrow tip ends at ~(82, 44) which maps to the form vertically.
+            Shaft curves from top-left down to right, ending mid-height of the form row.
+          -->
+          <svg width="90" height="58" viewBox="0 0 90 58" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right:-2px;margin-top:-2px;">
             <path
-              d="M10 8 C14 18, 18 32, 30 46 C42 58, 62 64, 82 62"
+              d="M8 6 C14 16, 20 28, 34 38 C48 48, 64 48, 82 44"
               stroke="#b8ad30"
               stroke-width="2.8"
               stroke-linecap="round"
               fill="none"
               style="stroke-dasharray:130;stroke-dashoffset:130;animation:draw 0.65s ease 1.7s forwards;"
             />
-            <!-- arrowhead pointing right -->
             <path
-              d="M82 62 L72 54 M82 62 L74 70"
+              d="M82 44 L70 38 M82 44 L72 52"
               stroke="#b8ad30"
               stroke-width="2.8"
               stroke-linecap="round"
