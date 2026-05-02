@@ -141,13 +141,40 @@
   <div id="cursor"></div>
   <div id="smiley-field"></div>
 
-  <main class="hero">
-    <h1><span>5 / 8 / 2026</span></h1>
-    <p><u>#spreadsacknothate</u></p>
-    <div class="klaviyo-form-UbDaqn"></div>
-  </main>
-  
-  <a href="https://www.instagram.com/happysack.store" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram">
+  <div class="ui-layer">
+    <main class="hero">
+      <h1><span>under construction</span></h1>
+      <p>check back soon.</p>
+      <p><u>#spreadsacknothate</u></p>
+      <form class="signup-form" id="signup-form">
+        <label class="sr-only" for="email-input">Email address</label>
+        <input
+          class="signup-input"
+          id="email-input"
+          name="email"
+          type="email"
+          autocomplete="email"
+          inputmode="email"
+          placeholder="join the mailing list"
+          required
+        />
+        <button class="signup-button" type="submit" aria-label="Submit email">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
+            <path d="M5 12h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+            <path d="M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <div class="signup-status" id="signup-status" aria-live="polite"></div>
+      </form>
+    </main>
+  </div>
+  <a
+    class="social-link"
+    href="https://www.instagram.com/happysack.store"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Follow us on Instagram"
+  >
     <img
       src="instagramyellow.png"
       alt="Instagram"
@@ -167,6 +194,7 @@
       const FRICTION     = 0.82;
       const RETURN_EASE  = 0.055;
 
+      // Faces flipped to face right, :3 removed
       const FACES = ['(:', 'D:', '(;', '[:'];
 
       const field  = document.getElementById('smiley-field');
@@ -198,6 +226,7 @@
           ox, oy,
           x: ox, y: oy,
           vx: 0, vy: 0,
+          // Float params: random amplitude, speed, and phase per axis
           floatAx: 18 + Math.random() * 28,
           floatAy: 14 + Math.random() * 22,
           floatSpeedX: 0.0004 + Math.random() * 0.0006,
@@ -225,6 +254,7 @@
         lastTime = now;
 
         smileys.forEach(s => {
+          // Floating origin drifts over time with sine waves
           const floatX = Math.sin(now * s.floatSpeedX + s.floatPhaseX) * s.floatAx;
           const floatY = Math.cos(now * s.floatSpeedY + s.floatPhaseY) * s.floatAy;
           const targetX = s.ox + floatX;
@@ -243,6 +273,7 @@
             s.el.style.color = '';
           }
 
+          // Spring toward the floating target (not the fixed origin)
           s.vx += (targetX - s.x) * RETURN_EASE;
           s.vy += (targetY - s.y) * RETURN_EASE;
 
@@ -262,12 +293,6 @@
 
       requestAnimationFrame(tick);
     })();
-  </script>
-
-  <!-- Klaviyo: loaded last so the form div above is already in the DOM -->
-  <script async src="https://static.klaviyo.com/onsite/js/X7VnH6/klaviyo.js?company_id=X7VnH6"></script>
-  <script>
-    !function(){if(!window.klaviyo){window._klOnsite=window._klOnsite||[];try{window.klaviyo=new Proxy({},{get:function(n,i){return"push"===i?function(){var n;(n=window._klOnsite).push.apply(n,arguments)}:function(){for(var n=arguments.length,o=new Array(n),w=0;w<n;w++)o[w]=arguments[w];var t="function"==typeof o[o.length-1]?o.pop():void 0,e=new Promise((function(n){window._klOnsite.push([i].concat(o,[function(i){t&&t(i),n(i)}]))}));return e}}})}catch(n){window.klaviyo=window.klaviyo||[],window.klaviyo.push=function(){var n;(n=window._klOnsite).push.apply(n,arguments)}}}}();
   </script>
 
 </body>
